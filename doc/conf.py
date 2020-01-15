@@ -121,6 +121,7 @@ except Exception:
 # -- Options for HTML output ----------------------------------------------
 
 html_title = project + ' version ' + release
+html_theme = 'insipid'
 
 # -- Options for LaTeX output ---------------------------------------------
 
