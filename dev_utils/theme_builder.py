@@ -49,6 +49,7 @@ for name, branch in themes:
     build_args = [str(SOURCE_DIR), str(MAIN_DIR / name)]
     # TODO: create proper release/version/today strings
     build_args.extend(['-Drelease=dummy', '-Dversion=dummy', '-Dtoday=dummy'])
+    build_args.extend(['-Dhtml_title=nbsphinx'])
     if name not in ['guzzle', 'press']:
         build_args.extend(['-d', str(CACHE_DIR)])
     if build_main(build_args) != 0:
