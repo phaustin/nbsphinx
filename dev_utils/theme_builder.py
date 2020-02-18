@@ -25,6 +25,7 @@ for remote_branch in theme_remote.refs:
             (remote_branch.remote_head[:-len('-theme')], remote_branch.name))
 
 if not WORKTREE_DIR.exists():
+    repo.git.worktree('prune')
     repo.git.worktree('add', WORKTREE_DIR, '--detach')
 
 worktree = git.Git(WORKTREE_DIR)
