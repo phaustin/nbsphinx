@@ -38,6 +38,11 @@ import docutils
 from docutils.parsers import rst
 import jinja2
 import nbconvert
+try:
+    from nbconvert.preprocessors.execute import CellExecutionError
+except ImportError:
+    # nbconvert >= 6.0
+    from nbconvert.preprocessors import CellExecutionError
 import nbformat
 import sphinx
 import sphinx.directives
@@ -976,7 +981,7 @@ class NotebookParser(rst.Parser):
 
         try:
             rststring, resources = exporter.from_notebook_node(nb, resources)
-        except nbconvert.preprocessors.execute.CellExecutionError as e:
+        except CellExecutionError as e:
             lines = str(e).split('\n')
             lines[0] = 'CellExecutionError in {}:'.format(
                 env.doc2path(env.docname, base=None))
