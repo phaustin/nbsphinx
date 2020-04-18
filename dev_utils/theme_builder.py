@@ -10,6 +10,13 @@ from pathlib import Path
 import git
 from sphinx.cmd.build import build_main
 
+
+def theme_branches(remote):
+    for branch in remote.refs:
+        if branch.remote_head.endswith('-theme'):
+            yield branch.remote_head[:-len('-theme')], branch.name
+
+
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument(
     '-l', '--list-themes', action='store_true',
@@ -26,9 +33,8 @@ else:
     raise ValueError('theme_remote not found')
 
 if args.list_themes:
-    for remote_branch in theme_remote.refs:
-        if remote_branch.remote_head.endswith('-theme'):
-            print(remote_branch.remote_head[:-len('-theme')])
+    for theme, _ in theme_branches(theme_remote):
+        print(theme)
     parser.exit(0)
 
 parser = argparse.ArgumentParser(
@@ -40,20 +46,15 @@ parser.add_argument(
     help='theme name (according to "*-theme" branch name)')
 args = parser.parse_args(remaining)
 
-themes = []
+themes = theme_branches(theme_remote)
 if args.themes:
-    for remote_branch in theme_remote.refs:
-        theme_name = remote_branch.remote_head[:-len('-theme')]
-        if theme_name in args.themes:
-            themes.append((theme_name, remote_branch.name))
-            args.themes.remove(theme_name)
+    themes, potential_themes = [], themes
+    for theme, branch in potential_themes:
+        if theme in args.themes:
+            themes.append((theme, branch))
+            args.themes.remove(theme)
     if args.themes:
         parser.exit('theme(s) not found: {}'.format(args.themes))
-else:
-    for remote_branch in theme_remote.refs:
-        if remote_branch.remote_head.endswith('-theme'):
-            themes.append(
-                (remote_branch.remote_head[:-len('-theme')], remote_branch.name))
 
 worktree_dir = main_dir / '_worktree'
 if not worktree_dir.exists():
@@ -61,16 +62,11 @@ if not worktree_dir.exists():
     repo.git.worktree('add', worktree_dir, '--detach')
 
 worktree = git.Git(worktree_dir)
-
 head_commit = repo.git.rev_parse('HEAD')
-
 worktree.reset(head_commit, '--hard')
-
 stash_commit = repo.git.stash('create')
-
 if stash_commit:
     worktree.merge(stash_commit)
-
 base_commit = worktree.rev_parse('HEAD')
 
 for name, branch in themes:
