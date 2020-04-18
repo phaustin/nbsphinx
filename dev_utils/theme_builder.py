@@ -10,24 +10,35 @@ from pathlib import Path
 import git
 from sphinx.cmd.build import build_main
 
-parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-)
+parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument(
-    'themes', metavar='THEME-NAME', nargs='*',
-    help='theme name (according to "*-theme" branch name)')
-args = parser.parse_args()
+    '-l', '--list-themes', action='store_true',
+    help='show list of available themes and exit')
+args, remaining = parser.parse_known_args()
 
 main_dir = Path(__file__).resolve().parent
 repo = git.Repo(main_dir, search_parent_directories=True)
-
 for remote in repo.remotes:
     if any('spatialaudio/nbsphinx' in url for url in remote.urls):
         theme_remote = remote
         break
 else:
     raise ValueError('theme_remote not found')
+
+if args.list_themes:
+    for remote_branch in theme_remote.refs:
+        if remote_branch.remote_head.endswith('-theme'):
+            print(remote_branch.remote_head[:-len('-theme')])
+    parser.exit(0)
+
+parser = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    parents=[parser])
+parser.add_argument(
+    'themes', metavar='THEME-NAME', nargs='*',
+    help='theme name (according to "*-theme" branch name)')
+args = parser.parse_args(remaining)
 
 themes = []
 if args.themes:
