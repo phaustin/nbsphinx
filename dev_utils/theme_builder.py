@@ -4,12 +4,10 @@ from pathlib import Path
 import git
 from sphinx.cmd.build import build_main
 
-MAIN_DIR = Path(__file__).resolve().parent
-CACHE_DIR = MAIN_DIR / '_cache'
-WORKTREE_DIR = MAIN_DIR / '_worktree'
-SOURCE_DIR = WORKTREE_DIR / 'doc'
+main_dir = Path(__file__).resolve().parent
+worktree_dir = main_dir / '_worktree'
 
-repo = git.Repo(MAIN_DIR, search_parent_directories=True)
+repo = git.Repo(main_dir, search_parent_directories=True)
 
 for remote in repo.remotes:
     if any('spatialaudio/nbsphinx' in url for url in remote.urls):
@@ -24,11 +22,11 @@ for remote_branch in theme_remote.refs:
         themes.append(
             (remote_branch.remote_head[:-len('-theme')], remote_branch.name))
 
-if not WORKTREE_DIR.exists():
+if not worktree_dir.exists():
     repo.git.worktree('prune')
-    repo.git.worktree('add', WORKTREE_DIR, '--detach')
+    repo.git.worktree('add', worktree_dir, '--detach')
 
-worktree = git.Git(WORKTREE_DIR)
+worktree = git.Git(worktree_dir)
 
 head_commit = repo.git.rev_parse('HEAD')
 
@@ -44,14 +42,14 @@ base_commit = worktree.rev_parse('HEAD')
 for name, branch in themes:
     print('\n\n')
     print('#' * 80)
-    print('#', 'BUILDING BRANCH: {}'.format(name.upper()).center(76), '#')
+    print('#', 'BUILDING: {}'.format(name.upper()).center(76), '#')
     print('#' * 80)
     worktree.cherry_pick(branch)
-    build_args = [str(SOURCE_DIR), str(MAIN_DIR / name)]
+    build_args = [str(worktree_dir / 'doc'), str(main_dir / name)]
     # TODO: create proper release/version/today strings
     build_args.extend(['-Drelease=dummy', '-Dversion=dummy', '-Dtoday=dummy'])
     build_args.extend(['-Dhtml_title=nbsphinx'])
-    build_args.extend(['-d', str(CACHE_DIR)])
+    build_args.extend(['-d', str(main_dir / '_cache')])
     if build_main(build_args) != 0:
         raise Exception('An Error occurred building the docs.')
     worktree.reset(base_commit, '--hard')
