@@ -90,7 +90,6 @@ def run_with_all_themes(func):
 
 
 def build_docs(name, branch):
-    print('\n\n')
     print('#' * 80)
     print('#', 'BUILDING: {}'.format(name.upper()).center(76), '#')
     print('#' * 80)
@@ -101,6 +100,7 @@ def build_docs(name, branch):
     build_args.extend(['-d', str(main_dir / '_cache')])
     if build_main(build_args) != 0:
         raise Exception('An Error occurred building the docs.')
+    print('')
 
 
 if args.requirements:
