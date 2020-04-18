@@ -69,12 +69,22 @@ if stash_commit:
     worktree.merge(stash_commit)
 base_commit = worktree.rev_parse('HEAD')
 
-for name, branch in themes:
+
+def run_with_all_themes(func):
+    try:
+        for name, branch in themes:
+            worktree.cherry_pick(branch)
+            func(name, branch)
+            worktree.reset(base_commit, '--hard')
+    finally:
+        worktree.reset(head_commit, '--hard')
+
+
+def build_docs(name, branch):
     print('\n\n')
     print('#' * 80)
     print('#', 'BUILDING: {}'.format(name.upper()).center(76), '#')
     print('#' * 80)
-    worktree.cherry_pick(branch)
     build_args = [str(worktree_dir / 'doc'), str(main_dir / name)]
     # TODO: create proper release/version/today strings
     build_args.extend(['-Drelease=dummy', '-Dversion=dummy', '-Dtoday=dummy'])
@@ -82,7 +92,6 @@ for name, branch in themes:
     build_args.extend(['-d', str(main_dir / '_cache')])
     if build_main(build_args) != 0:
         raise Exception('An Error occurred building the docs.')
-    worktree.reset(base_commit, '--hard')
 
-# TODO: use context manager to make sure this is done in the end:
-worktree.reset(head_commit, '--hard')
+
+run_with_all_themes(build_docs)
