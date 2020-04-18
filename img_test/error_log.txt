@@ -1,0 +1,68 @@
+#!/bin/bash -v
+#
+# move the ipynb files into the doc_notebooks folder
+#
+mkdir -p _build
+rm -rf _build/*
+#
+# build the website
+#
+sphinx-build -N -v -b html . _build/html
+Running Sphinx v2.4.4
+making output directory... done
+WARNING: html_static_path entry '_static' does not exist
+building [mo]: targets for 0 po files that are out of date
+building [html]: targets for 2 source files that are out of date
+updating environment: [new config] 2 added, 0 changed, 0 removed
+reading sources... [ 50%] index
+reading sources... [100%] quiz2_2019t2
+
+/Users/phil/repos/nbsphinx_img/img_test/quiz2_2019t2.ipynb:55: WARNING: Definition list ends without a blank line; unexpected unindent.
+/Users/phil/repos/nbsphinx_img/img_test/quiz2_2019t2.ipynb:56: WARNING: Definition list ends without a blank line; unexpected unindent.
+/Users/phil/repos/nbsphinx_img/img_test/quiz2_2019t2.ipynb:57: WARNING: Definition list ends without a blank line; unexpected unindent.
+/Users/phil/repos/nbsphinx_img/img_test/quiz2_2019t2.ipynb:6: WARNING: Each notebook should have at least one section title
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+writing output... [ 50%] index
+writing output... [100%] quiz2_2019t2
+
+/Users/phil/repos/nbsphinx_img/img_test/index.rst:4: WARNING: toctree contains reference to document 'quiz2_2019t2' that doesn't have a title: no link will be generated
+/Users/phil/repos/nbsphinx_img/img_test/index.rst:4: WARNING: toctree contains reference to document 'quiz2_2019t2' that doesn't have a title: no link will be generated
+/Users/phil/repos/nbsphinx_img/img_test/index.rst:4: WARNING: toctree contains reference to document 'quiz2_2019t2' that doesn't have a title: no link will be generated
+generating indices...  genindex/Users/phil/repos/nbsphinx_img/img_test/index.rst:4: WARNING: toctree contains reference to document 'quiz2_2019t2' that doesn't have a title: no link will be generated
+done
+copying notebooks ... [100%] quiz2_2019t2.ipynb
+
+writing additional pages...  search/Users/phil/a50037/envs/cdp/lib/python3.7/site-packages/sphinx_rtd_theme/search.html:21: RemovedInSphinx30Warning: To modify script_files in the theme is deprecated. Please insert a <script> tag directly in your theme instead.
+  {% endblock %}
+/Users/phil/repos/nbsphinx_img/img_test/index.rst:4: WARNING: toctree contains reference to document 'quiz2_2019t2' that doesn't have a title: no link will be generated
+done
+copying static files... ... done
+copying extra files... done
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded, 10 warnings.
+
+The HTML pages are in _build/html.
+rsync -avz media _build/html/
+building file list ... done
+media/
+media/quiz2_media/
+media/quiz2_media/feedback_lapse_rate.png
+media/quiz2_media/image1.jpeg
+media/quiz2_media/image17.png
+media/quiz2_media/image3.jpeg
+media/quiz2_media/image4.emf
+media/quiz2_media/image5.png
+media/quiz2_media/image6.png
+media/quiz2_media/image7.emf
+
+sent 552937 bytes  received 208 bytes  368763.33 bytes/sec
+total size is 1137244  speedup is 2.06
+mv _build/html/* _build/.
+
+
+
+
