@@ -72,7 +72,7 @@ if not worktree_dir.exists():
 worktree = git.Git(worktree_dir)
 head_commit = repo.git.rev_parse('HEAD')
 worktree.reset(head_commit, '--hard')
-stash_commit = repo.git.stash('create')
+stash_commit = repo.git.stash('create', '--include-untracked')
 if stash_commit:
     worktree.merge(stash_commit)
 base_commit = worktree.rev_parse('HEAD')
