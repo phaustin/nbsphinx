@@ -3,6 +3,11 @@
 
 If no THEME-NAME is given, all theme branches are built.
 
+A requirements file can be created with the --requirements flag.
+Those requirements can be installed with:
+
+    python3 -m pip install -r dev_utils/theme_requirements.txt
+
 """
 import argparse
 from pathlib import Path
@@ -44,6 +49,9 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     'themes', metavar='THEME-NAME', nargs='*',
     help='theme name (according to "*-theme" branch name)')
+parser.add_argument(
+    '--requirements', action='store_true',
+    help='create theme_requirements.txt and exit')
 args = parser.parse_args(remaining)
 
 themes = theme_branches(theme_remote)
@@ -93,5 +101,20 @@ def build_docs(name, branch):
     if build_main(build_args) != 0:
         raise Exception('An Error occurred building the docs.')
 
+
+if args.requirements:
+    requirements = set()
+
+    def collect_requirements(name, branch):
+        file = worktree_dir / 'doc' / 'requirements.txt'
+        requirements.update(file.read_text().splitlines())
+
+    run_with_all_themes(collect_requirements)
+    file = Path(repo.working_tree_dir) / 'doc' / 'requirements.txt'
+    requirements.difference_update(file.read_text().splitlines())
+    file = main_dir / 'theme_requirements.txt'
+    file.write_text('\n'.join(sorted(requirements)))
+    print('Requirements written to', file)
+    parser.exit(0)
 
 run_with_all_themes(build_docs)
