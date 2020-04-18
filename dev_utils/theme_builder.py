@@ -86,6 +86,7 @@ def run_with_all_themes(func):
             worktree.reset(base_commit, '--hard')
     finally:
         worktree.reset(head_commit, '--hard')
+        repo.git.worktree('prune')
 
 
 def build_docs(name, branch):
