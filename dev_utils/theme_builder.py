@@ -51,9 +51,7 @@ for name, branch in themes:
     # TODO: create proper release/version/today strings
     build_args.extend(['-Drelease=dummy', '-Dversion=dummy', '-Dtoday=dummy'])
     build_args.extend(['-Dhtml_title=nbsphinx'])
-    if name != 'press':
-        # https://github.com/schettino72/sphinx_press_theme/pull/36
-        build_args.extend(['-d', str(CACHE_DIR)])
+    build_args.extend(['-d', str(CACHE_DIR)])
     if build_main(build_args) != 0:
         raise Exception('An Error occurred building the docs.')
     worktree.reset(base_commit, '--hard')
